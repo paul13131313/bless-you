@@ -14,20 +14,22 @@ export default function PhotoCard({ photo }: PhotoCardProps) {
   const aspectRatio = photo.height / photo.width;
 
   return (
-    <div className="relative w-full" style={{ backgroundColor: "#f0f0f0" }}>
-      {/* Aspect ratio spacer (keeps layout stable before image loads) */}
-      {!loaded && (
-        <div style={{ paddingBottom: `${aspectRatio * 100}%` }} />
-      )}
-
+    <div
+      className="relative w-full overflow-hidden"
+      style={{
+        backgroundColor: "#f0f0f0",
+        paddingBottom: `${aspectRatio * 100}%`,
+      }}
+    >
       <img
         src={photo.url}
         alt=""
         loading="lazy"
         onLoad={() => setLoaded(true)}
-        className="w-full block"
+        className="absolute inset-0 w-full h-full object-cover"
         style={{
-          display: loaded ? "block" : "none",
+          opacity: loaded ? 1 : 0,
+          transition: "opacity 0.3s ease",
         }}
       />
     </div>
