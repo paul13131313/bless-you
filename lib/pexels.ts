@@ -27,12 +27,12 @@ interface PexelsSearchResponse {
 }
 
 const QUERIES = [
-  "yawn",
-  "yawning",
   "yawning person",
-  "sleepy face",
   "yawning cat",
   "yawning dog",
+  "yawning baby",
+  "yawning animal",
+  "yawn mouth open",
 ];
 
 export async function fetchYawnPhotos(

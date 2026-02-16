@@ -62,7 +62,7 @@ export default function Feed() {
   }, [page, hasMore, fetchPhotos]);
 
   return (
-    <div className="flex flex-col" style={{ gap: "2px" }}>
+    <div className="flex flex-col">
       {photos.map((photo) => (
         <PhotoCard key={photo.id} photo={photo} />
       ))}
