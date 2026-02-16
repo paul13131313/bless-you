@@ -27,15 +27,15 @@ interface PexelsSearchResponse {
 }
 
 const QUERIES = [
-  "sneeze",
-  "sneezing",
-  "funny face",
-  "funny expression",
-  "weird face",
-  "hilarious face",
+  "yawn",
+  "yawning",
+  "yawning person",
+  "sleepy face",
+  "yawning cat",
+  "yawning dog",
 ];
 
-export async function fetchSneezePhotos(
+export async function fetchYawnPhotos(
   page: number = 1,
   perPage: number = 15
 ): Promise<{ photos: Photo[]; hasMore: boolean }> {

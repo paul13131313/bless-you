@@ -3,14 +3,14 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bless-you-seven.vercel.app"),
-  title: "bless you",
-  description: "くしゃみの瞬間だけを集めた写真集",
+  title: "yaaawn",
+  description: "あくびの写真が止まらない",
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤧</text></svg>",
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥱</text></svg>",
   },
   openGraph: {
-    title: "bless you",
-    description: "くしゃみの瞬間だけを集めた写真集",
+    title: "yaaawn",
+    description: "あくびの写真が止まらない",
     type: "website",
     images: [
       {
@@ -40,7 +40,7 @@ export default function RootLayout({
     <html lang="ja">
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap"
           rel="stylesheet"
         />
       </head>
