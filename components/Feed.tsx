@@ -11,29 +11,29 @@ export default function Feed() {
   const [hasMore, setHasMore] = useState(true);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const initialLoadDone = useRef(false);
+  const loadingRef = useRef(false);
 
-  const fetchPhotos = useCallback(
-    async (pageNum: number) => {
-      if (loading) return;
-      setLoading(true);
-      try {
-        const res = await fetch(`/api/photos?page=${pageNum}&per_page=15`);
-        const data = await res.json();
-        if (data.photos.length === 0) {
-          setHasMore(false);
-        } else {
-          setPhotos((prev) => [...prev, ...data.photos]);
-          setPage(pageNum + 1);
-          setHasMore(data.hasMore);
-        }
-      } catch (err) {
-        console.error("Failed to fetch photos:", err);
-      } finally {
-        setLoading(false);
+  const fetchPhotos = useCallback(async (pageNum: number) => {
+    if (loadingRef.current) return;
+    loadingRef.current = true;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/photos?page=${pageNum}&per_page=15`);
+      const data = await res.json();
+      if (data.photos.length === 0) {
+        setHasMore(false);
+      } else {
+        setPhotos((prev) => [...prev, ...data.photos]);
+        setPage(pageNum + 1);
+        setHasMore(data.hasMore);
       }
-    },
-    [loading]
-  );
+    } catch (err) {
+      console.error("Failed to fetch photos:", err);
+    } finally {
+      loadingRef.current = false;
+      setLoading(false);
+    }
+  }, []);
 
   // Initial load
   useEffect(() => {
@@ -41,8 +41,7 @@ export default function Feed() {
       initialLoadDone.current = true;
       fetchPhotos(1);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchPhotos]);
 
   // Infinite scroll
   useEffect(() => {
@@ -51,7 +50,7 @@ export default function Feed() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && hasMore && !loading) {
+        if (entry.isIntersecting && hasMore && !loadingRef.current) {
           fetchPhotos(page);
         }
       },
@@ -60,7 +59,7 @@ export default function Feed() {
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [page, hasMore, loading, fetchPhotos]);
+  }, [page, hasMore, fetchPhotos]);
 
   return (
     <div className="flex flex-col" style={{ gap: "2px" }}>
