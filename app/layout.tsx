@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bless-you-seven.vercel.app"),
   title: "bless you",
   description: "くしゃみの瞬間だけを集めた写真集",
   icons: {
