@@ -4,54 +4,50 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import PhotoCard from "./PhotoCard";
 import type { Photo } from "@/lib/types";
 
-export default function Feed() {
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const initialLoadDone = useRef(false);
-  const loadingRef = useRef(false);
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const PAGE_SIZE = 15;
 
-  const fetchPhotos = useCallback(async (pageNum: number) => {
-    if (loadingRef.current) return;
-    loadingRef.current = true;
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/photos?page=${pageNum}&per_page=15`);
-      const data = await res.json();
-      if (data.photos.length === 0) {
-        setHasMore(false);
-      } else {
-        setPhotos((prev) => [...prev, ...data.photos]);
-        setPage(pageNum + 1);
-        setHasMore(data.hasMore);
-      }
-    } catch (err) {
-      console.error("Failed to fetch photos:", err);
-    } finally {
-      loadingRef.current = false;
-      setLoading(false);
-    }
+export default function Feed() {
+  const [allPhotos, setAllPhotos] = useState<Photo[]>([]);
+  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
+  const [loading, setLoading] = useState(true);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const dataLoaded = useRef(false);
+
+  // data.json を一度だけ読み込む
+  useEffect(() => {
+    if (dataLoaded.current) return;
+    dataLoaded.current = true;
+    fetch(`${BASE_PATH}/data.json`)
+      .then((res) => res.json())
+      .then((data: Photo[]) => {
+        setAllPhotos(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch data.json:", err);
+        setLoading(false);
+      });
   }, []);
 
-  // Initial load
-  useEffect(() => {
-    if (!initialLoadDone.current) {
-      initialLoadDone.current = true;
-      fetchPhotos(1);
-    }
-  }, [fetchPhotos]);
+  const photos = allPhotos.slice(0, displayCount);
+  const hasMore = displayCount < allPhotos.length;
 
   // Infinite scroll
+  const loadMore = useCallback(() => {
+    if (hasMore) {
+      setDisplayCount((prev) => Math.min(prev + PAGE_SIZE, allPhotos.length));
+    }
+  }, [hasMore, allPhotos.length]);
+
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && hasMore && !loadingRef.current) {
-          fetchPhotos(page);
+        if (entry.isIntersecting && hasMore) {
+          loadMore();
         }
       },
       { rootMargin: "600px" }
@@ -59,7 +55,7 @@ export default function Feed() {
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [page, hasMore, fetchPhotos]);
+  }, [hasMore, loadMore]);
 
   return (
     <div className="flex flex-col">

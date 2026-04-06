@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "prebuild": "node scripts/fetch-data.mjs",
+    "build": "node scripts/fetch-data.mjs && next build",
     "start": "next start",
     "lint": "next lint"
   },
